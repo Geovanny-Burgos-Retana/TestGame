@@ -7,6 +7,7 @@
 
 #define NUM_CLIENTS 50
 #define SIZE_MSG 1024
+#define PORT 8080 
 
 /*Variables de conexión para MySQL*/
 MYSQL *conn;
@@ -55,7 +56,7 @@ int main() {
     // Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons(8888);
+    server.sin_port = htons(PORT);
 
     // Assigns the address specified by addr to the socket referred to by the file descriptor sockfd
     if (bind(sockfd_server, (struct sockaddr*)&server, sizeof(server))) {
@@ -91,9 +92,25 @@ void menu() {
     int addrlen = sizeof(client);
     client_sockfd = accept(sockfd_server, (struct sockaddr *) &client, &addrlen);
     char* message[SIZE_MSG];
-    /*while(1) {
-        message = "1. ";
-    }*/
+    while(1) {
+        // Recibir cual solicitud hizo el cliente
+        read(client_sockfd, message, 1024);
+        switch (message)
+        {
+        case '1':
+            proof();
+            break;
+        case '2':
+            /* code */
+            break;
+        case '3':
+            /* code */
+            break;
+        default:
+            break;
+        }
+
+    }
 }
 
 void proof() {
