@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <mysql/mysql.h>
+#include <strings.h>
+
 
 #define NUM_CLIENTS 50
 #define SIZE_MSG 1024
@@ -39,20 +41,23 @@ void proof();
 void menu();
 
 int main() {    
-
+    
     // Create socket
     sockfd_server = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd_server == -1) {
         perror("socket failed\n");
         exit(1);
     }
+    printf("\n=> Socket successfully created..\n");
     
     // Prevents error such as: “address already in use”
     if (setsockopt(sockfd_server, SOL_SOCKET, (SO_REUSEPORT | SO_REUSEADDR), (char*)&optval, sizeof(int)) < 0) {
         perror("setsockopt failed\n");
         exit(2);
     }
+    printf("\n=> Socket successfully SetSocketOpt..\n");
     
+    bzero(&server, sizeof(server)); 
     // Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
@@ -64,6 +69,7 @@ int main() {
         close(sockfd_server);
         exit(3);
     }
+    printf("\n=> Socket successfully binded..\n");
 
     // Marks a connection-mode socket, specified by the socket argument and limits the number of outstanding connections in the listen queue
     if (listen(sockfd_server, 50)){
@@ -71,34 +77,53 @@ int main() {
         close(sockfd_server);
         exit(4);
     }
+    printf("\n=> Server listening..\n");    
 
     /* Inicializar conexión */
-    conn = mysql_init(NULL);
+    //conn = mysql_init(NULL);
 
     /* Conectar al servidor y a ala base de datos */
-    if(!mysql_real_connect(conn, serverdb, user, password, database, 0, NULL, 0)) {        
+    /*if(!mysql_real_connect(conn, serverdb, user, password, database, 0, NULL, 0)) {        
         fprintf(stderr, "%s\n", mysql_error(conn));        
         exit(1);
-    }    
+    }*/
 
-    for (int i = 0; i < NUM_CLIENTS; i++) {
-        pthread_t thread_by_client;
-        pthread_create(&thread_by_client, NULL, menu, NULL);
-        pthread_join(thread_by_client, NULL);
+    while (1) {
+        int addrlen = sizeof(client);
+        client_sockfd = accept(sockfd_server, (struct sockaddr *) &client, &addrlen);
+        if(client_sockfd < 0) {          
+          printf ("Conexión with client failed");
+          exit(1);
+        }
+        printf("Nuevo cliente conectado");        
+
+        if(fork()) {
+            menu();
+        } else {
+            close(client_sockfd);
+        }
     }
+    
+    /*for (int i = 0; i < 50; i++) {
+        printf("Team threads");
+        pthread_t thread_by_client;
+        pthread_create(&thread_by_client, NULL, &menu, NULL);
+        pthread_join(thread_by_client, 0);
+    }*/
 }
 
 void menu() {
-    int addrlen = sizeof(client);
-    client_sockfd = accept(sockfd_server, (struct sockaddr *) &client, &addrlen);
-    char* message[SIZE_MSG];
+    char message[SIZE_MSG] = {0};
     while(1) {
         // Recibir cual solicitud hizo el cliente
-        read(client_sockfd, message, 1024);
-        switch (message)
-        {
+        send(sockfd_server, message, SIZE_MSG, 0);
+        recv(sockfd_server, message, SIZE_MSG, 0);
+        int i = atoi(message);
+        printf("Opción solicitada por el cliente: %s %d\n", message, getpid());
+        sleep(2);
+        switch (i) {
         case '1':
-            proof();
+            /* code */
             break;
         case '2':
             /* code */
@@ -123,7 +148,7 @@ void proof() {
     while((row = mysql_fetch_row(res)) != NULL)
         printf("%s\n", row[1]);
 
-    // Close the connection
+    // Close the connection    
     mysql_free_result(res);
     mysql_close(conn);
 }
