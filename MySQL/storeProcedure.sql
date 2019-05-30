@@ -43,8 +43,3 @@ BEGIN
         select id_cliente from cliente WHERE nombre = p_nombre;
 	END IF;
 END$$
-
-
-Drop procedure CREATE_CLIENTE;
-CALL CREATE_CLIENTE('Pablo');
-CALL SELECT_MAYOR_PUNTAJE(1,3);
