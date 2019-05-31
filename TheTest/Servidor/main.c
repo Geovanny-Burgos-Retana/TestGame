@@ -4,7 +4,7 @@
 #include <pthread.h>
 
 int main(){
-    
+        
     initServer();
 
     root = newClient(serverSocket, inet_ntoa(serverInfo.sin_addr));
@@ -22,12 +22,13 @@ int main(){
         ClientNode* nc = newClient(clientSocket, clientIP);
         addClientToConnections(nc);
 
-        // Hay que registrar en base de datos y obtener su id para tenerlo para futuras consultas
-        // Este id debe agregarse al objeto del cliente
-        // La lista de conexiones es inecesaria
-
-        pthread_t tid;
-        pthread_create(&tid, NULL, (void*)startChat, (void*)nc);
+        if (fork() == 0) {
+            conectionDB();
+            startChat(nc);
+        }
+        fflush(stdout);
+        /*pthread_t tid;
+        pthread_create(&tid, NULL, (void*)startChat, (void*)nc);*/
     }
 
     close(serverSocket);
