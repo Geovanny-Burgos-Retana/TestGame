@@ -24,9 +24,9 @@ void initialize(struct sockaddr_in*,struct sockaddr_in*);
 
 void connection(struct sockaddr_in*, struct sockaddr_in*);
 
-void reciveMessages();
+void start_game(); 
 
-void sendMessages();
+void pending_game();
 
 int start();
 

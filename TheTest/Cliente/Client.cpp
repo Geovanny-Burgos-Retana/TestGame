@@ -1,3 +1,7 @@
+//LIBRERIAS
+#include <iostream>
+#include <sstream>
+//Sockets
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,11 +20,13 @@
 #define BLU   "\x1B[34m"
 #define RESET "\x1B[0m"
 
+using namespace std;
+
 // Globals
 int clientSocket;
 char username[USERNAME_LEN];
 
-void reciveMessages() {
+/*void reciveMessages() {
     char recvBuffer[MSG_LEN];
     while (1) {
         int recvStatus = recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
@@ -35,25 +41,9 @@ void reciveMessages() {
             exit(-1);
         }
     }
-}
-int read_config_file(char* config_filename){
-    int puerto;
-    char nuevoport[10];
-    FILE *infile;
-    infile= fopen(config_filename,"rb");
-    if(infile ==NULL){
-        printf("Error al abrir archivo");
-        exit(1);
-    }
-    fgets(nuevoport, sizeof(nuevoport), infile);
-    // printf("Puerto nuevo:%s\n",nuevoport);
-    fclose(infile);
-    puerto = atoi(nuevoport);
-    printf("Puerto int:%d\n",puerto);
-    return puerto;
-    
-}
-void sendMessages() {
+}*/
+
+/*void sendMessages() {
     char sendBuffer[MSG_LEN];
     while (1) {
 
@@ -76,7 +66,7 @@ void sendMessages() {
             break;
         }
     }
-}
+}*/
 void validInput(){
     printf("Ingrese su nombre: ");
     if (fgets(username, USERNAME_LEN, stdin) != NULL) {
@@ -161,10 +151,35 @@ int start(){
 
     printf("Se ha conectado al servidor!\n");
 
+    char recvBuffer[MSG_LEN];
+    int option;
+
     //Send username to server
     send(clientSocket, username, USERNAME_LEN, 0);
     
-    //Make a child process
+    while(1) {
+        cout << "\n---- MENU ----\n1.Comenzar juego\n2.Juegos pendientes\n3.Salir\nIngrese opcion: "; cin >> option;        
+        stringstream strs;strs << option;string message = strs.str();        
+        strcpy(recvBuffer, message.c_str()); 
+        send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
+        printf("Hello message sent %d\n", option);
+        switch (option) {
+        case 1:
+            start_game(); 
+            break;
+        case 2:
+            pending_game();
+            break;
+        case 3:
+            exit(1);
+            break;        
+        default:
+            break;
+        }
+    }
+
+
+    /*//Make a child process
     int pid = fork();
 
     if (pid == 0) {
@@ -173,10 +188,16 @@ int start(){
 
     else{
         reciveMessages();
-    }
+    }*/
     	
     close(clientSocket);
     return 0;
 }
 
+void start_game(){
 
+}
+
+void pending_game(){
+    
+}

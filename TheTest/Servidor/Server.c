@@ -43,6 +43,8 @@ void initServer(){
 }
 
 void startChat(void* nc){
+    char *hello = "Hello from server"; 
+
     char recvBuffer[MSG_LEN];
     char sendBuffer[MSG_LEN];
     int quit = 0;
@@ -55,69 +57,31 @@ void startChat(void* nc){
     while(quit == 0){
         int msgRecv = recv(client->sockID, recvBuffer, sizeof(recvBuffer), 0);
 
-        //Recived successfully
-        if(msgRecv > 0){
-            //If posting a command
-            if(strcmp(recvBuffer, "/quit") == 0){
-                printf("%s salió de la sala de chat\n\n", client->username);
-                sprintf(sendBuffer, "%s salió de la sala de chat", client->username);
-                quit = 1;
-            }
-
-            else{
-                sprintf(sendBuffer, "%s:", client->username);
-                sendMessageToUser(recvBuffer, sendBuffer, client);
-            }
-        }
-
-        //No data streamed, client closed
-        else if (msgRecv == 0){
+        if (msgRecv == 0){
             printf("Desconectando al cliente: %s\n\n", client->username);
-            quit = 1;
+            break;
+        }
+        
+        switch (atoi(recvBuffer)) {
+        case 1:
+            hello = "Hello message sented form server";
+            send(client->sockID , hello , strlen(hello) , 0 ); 
+            printf("Hello message sent OPT1\n");					
+            break;
+        case 2:
+            hello = "Hello message sented form server";
+            send(client->sockID , hello , strlen(hello) , 0 ); 
+            printf("Hello message sent OPT2\n");
+            break;
+        case 3:	
+            printf("=> Client desconnected..\n");
+            exit(1);
+            break;
+        default:
+            break;
         }
 
-        //Fatal error on recv
-        else{
-            printf("\nError fatal recibiendo mensaje\n");
-            exit(-1);
-        }
-
-        //Send message
-        ClientNode* temp = root->next;
-
-        char username[USERNAME_LEN];
-        int i = 0;
-
-        //Copy the username before ':'
-        while(*(recvBuffer+i) != ':'){
-            username[i] = *(recvBuffer+i);
-            i++;
-        }
-        username[i] = '\0';
-
-
-        //Send message to specified user
-        while(temp != NULL){
-            int res = strcasecmp(username, temp->username);
-
-            if(res == 0){
-
-                //Obtain the message only
-                char* message = strchr(recvBuffer, ':');
-                message++;
-
-                //Append to send buffer
-                strcat(sendBuffer, message);
-
-                printf("Enviando mensaje a %s desde %s\n\n", temp->IP_addr, client->IP_addr);
-
-                send(temp->sockID, sendBuffer, strlen(sendBuffer), 0);
-                break;
-            }
-
-            temp = temp->next;
-        }
-
+        
         //Clean buffers
         memset(recvBuffer, 0, sizeof(recvBuffer));
         memset(sendBuffer, 0, sizeof(sendBuffer));
@@ -144,10 +108,13 @@ int registerUsername(char* sendBuffer, ClientNode* client){
         //Get the client's username and store it
         strncpy(client->username, username, strlen(username));        
 
-        //Store server response into send buffer
-        sprintf(sendBuffer, "%s entró a la sala de chat!", client->username);
+        // INSERTAR O RECUPERAR EL ID DEL USUARIO DE LA BASE DE DATOS
 
-        send(client->sockID, sendBuffer, MSG_LEN , 0);
+        // AGREGAR EL ID RECUPERADO AL OBJETO DEL CLIENTE
+
+        client->user_id = get_idUser(username);
+
+        printf("\n=> Cliente con identificar: %d\n", client->user_id);
 
         memset(username, 0, sizeof(username));
 

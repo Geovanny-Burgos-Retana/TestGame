@@ -13,6 +13,7 @@ typedef struct Client{
     struct Client* prev;
     char IP_addr[IP_LEN];
     char username[USERNAME_LEN];
+    int user_id;
 } ClientNode;
 
 ClientNode *root, *last;

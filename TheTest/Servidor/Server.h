@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include "Connections.h"
+#include "Database.h"
 #define MSG_LEN 256
 
 //Variables
