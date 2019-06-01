@@ -24,6 +24,7 @@ void conectionDB() {
 }
 
 int get_idUser(char* username){
+    conectionDB();
     char query[255];
     sprintf(query, "CALL CREATE_CLIENTE('%s')", username);
     printf("\n=> Request to database. Query: %s\n", query);
@@ -37,7 +38,24 @@ int get_idUser(char* username){
     if((row = mysql_fetch_row(res)) != NULL) {
         return atoi(row[0]);
     }
-    
+    mysql_close(conn);
     return 1;
 }
 
+void get_users_no_start_game(int id_user) {
+    conectionDB();
+    char query[255];
+    sprintf(query, "CALL GET_USERS_START_GAME(%d)", id_user);
+    printf("\n=> Request to database. Query: %s\n", query);
+
+    if(mysql_query(conn, query)){
+        fprintf(stderr, "Error %s\n", mysql_error(conn));
+        exit(1);
+    }
+
+    res = mysql_use_result(conn);
+    while((row = mysql_fetch_row(res)) != NULL) {
+        printf("%d %s\n", row[0], row[1]);
+    }
+    mysql_close(conn);
+}

@@ -16,5 +16,6 @@ MYSQL_ROW row;
 
 void conectionDB();
 int get_idUser(char*);
+void get_users_no_start_game(int);
 
 #endif // DATABASE_H_INCLUDED
