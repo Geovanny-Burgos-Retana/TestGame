@@ -64,6 +64,7 @@ void startChat(void* nc){
         
         switch (atoi(recvBuffer)) {
         case 1:
+            get_users_no_start_game(client->user_id);
             hello = "Hello message sented form server";
             send(client->sockID , hello , strlen(hello) , 0 ); 
             printf("Hello message sent OPT1\n");					

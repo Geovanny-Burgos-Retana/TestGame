@@ -22,8 +22,7 @@ int main(){
         ClientNode* nc = newClient(clientSocket, clientIP);
         addClientToConnections(nc);
 
-        if (fork() == 0) {
-            conectionDB();
+        if (fork() == 0) {            
             startChat(nc);
         }
         fflush(stdout);

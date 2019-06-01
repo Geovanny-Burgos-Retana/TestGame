@@ -26,53 +26,11 @@ using namespace std;
 int clientSocket;
 char username[USERNAME_LEN];
 
-/*void reciveMessages() {
-    char recvBuffer[MSG_LEN];
-    while (1) {
-        int recvStatus = recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
-        if (recvStatus > 0) {
-            printf(GRN "%s\n" RESET, recvBuffer);
-            fflush(stdout);
-            memset(recvBuffer, 0, sizeof(recvBuffer));
-        }
-
-        else if (recvStatus < 0) {
-            printf("Error fatal al recibir mensaje\n");
-            exit(-1);
-        }
-    }
-}*/
-
-/*void sendMessages() {
-    char sendBuffer[MSG_LEN];
-    while (1) {
-
-        while (fgets(sendBuffer, MSG_LEN, stdin) != NULL) {
-
-            char* nl = strchr(sendBuffer, '\n');
-            *nl = '\0';
-
-            if (strlen(sendBuffer) == 0) {
-                continue;
-            }
-
-            else {
-                break;
-            }
-        }
-
-        send(clientSocket, sendBuffer, sizeof(sendBuffer), 0);
-        if (strcmp(sendBuffer, "/quit") == 0) {
-            break;
-        }
-    }
-}*/
 void validInput(){
     printf("Ingrese su nombre: ");
     if (fgets(username, USERNAME_LEN, stdin) != NULL) {
         char* c = strchr(username, '\n');
-        *c = '\0';
-        
+        *c = '\0';        
     }
 
     if (strlen(username) <= 0) {
@@ -88,9 +46,10 @@ void createClient(){
         printf("Error fatal al crear el socket del cliente");
         exit(-1);
     }
+    printf("\n=> Socket successfully created..\n");
 }
 
-void initialize(struct sockaddr_in* serverInfo,struct sockaddr_in *clientInfo){
+/*void initialize(struct sockaddr_in* serverInfo,struct sockaddr_in *clientInfo){
     int serverAddrLen = sizeof(serverInfo);
     int clientAddrLen = sizeof(clientInfo);
 
@@ -100,9 +59,15 @@ void initialize(struct sockaddr_in* serverInfo,struct sockaddr_in *clientInfo){
     serverInfo->sin_addr.s_addr = inet_addr("127.0.0.1"); //TODO cambiar esto por el del .config
     serverInfo->sin_port = htons(9001);
     serverInfo->sin_family = AF_INET;
-}
 
-void connection(struct sockaddr_in* serverInfo, struct sockaddr_in *clientInfo){
+    if(inet_pton(AF_INET, "192.168.100.18", &serverInfo->sin_addr)<=0) { 
+		printf("\nInvalid address/ Address not supported \n"); 
+		exit(-1);
+	} 
+    printf("\n=> Socket successfully with valid address..\n");
+}*/
+
+/*void connection(struct sockaddr_in* serverInfo, struct sockaddr_in *clientInfo){
     int serverAddrLen = sizeof(serverInfo);
     int clientAddrLen = sizeof(clientInfo);
 
@@ -113,12 +78,14 @@ void connection(struct sockaddr_in* serverInfo, struct sockaddr_in *clientInfo){
         exit(-1);
     }
 
+    printf("\n=> Socket successfully connected..\n");
+
     getsockname(clientSocket, (struct sockaddr*) clientInfo, (socklen_t*) &clientAddrLen);
     printf("Se ha conectado al servidor: %s\n", inet_ntoa(serverInfo->sin_addr));
 
     //Send username to server
     send(clientSocket, username, USERNAME_LEN, 0);
-}
+}*/
 
 int start(){
 
@@ -138,9 +105,15 @@ int start(){
     memset(&serverInfo, 0, serverAddrLen);
     memset(&clientInfo, 0, clientAddrLen);
 
-    serverInfo.sin_addr.s_addr = inet_addr("192.168.100.18"); //TODO cambiar esto por el del .config
+    serverInfo.sin_addr.s_addr = inet_addr("192.168.100.12"); //TODO cambiar esto por el del .config
     serverInfo.sin_port = htons(9001);
     serverInfo.sin_family = AF_INET;
+
+    /*if(inet_pton(AF_INET, "172.19.127.63", &serverInfo.sin_addr)<=0) { 
+		printf("\nInvalid address/ Address not supported \n"); 
+		exit(-1);
+	} */
+    printf("\n=> Socket successfully with valid address..\n");
 
     int connectStatus = connect(clientSocket, (struct sockaddr*)&serverInfo, serverAddrLen);
 
@@ -149,7 +122,7 @@ int start(){
         exit(-1);
     }
 
-    printf("Se ha conectado al servidor!\n");
+    printf("\n=> Sockect client connected to server\n");
 
     char recvBuffer[MSG_LEN];
     int option;
