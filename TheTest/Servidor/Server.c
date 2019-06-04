@@ -75,20 +75,45 @@ void startChat(void* nc){
             int id_client = atoi(recvBuffer);
             printf("\nID C1: %d ID C2: %d\n", client->user_id, id_client);
             
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 2; i++) {                
                 strcpy(sendBuffer, get_question_with_answers(client->user_id, id_client));
                 send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
                 recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
                 printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
                 register_turno(client->user_id, id_client, atoi(recvBuffer));
+                
             }
-            
-            
+                        
             printf("\nHello message sent OPT1\n");
             break;
         case 2:
-            hello = "Hello message sented form server";
-            send(client->sockID , hello , strlen(hello) , 0 ); 
+            strcpy(sendBuffer, get_pending_games(client->user_id));
+            send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
+            recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
+            printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
+
+            int cliente_res = atoi(recvBuffer);
+
+            for (int i = 0; i < 2; i++) {
+                printf("\nEntro\n");
+                int question = pending_question(cliente_res, client->user_id);            
+                strcpy(sendBuffer, get_question_with_answers2(question));
+                send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
+                recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
+                printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
+                udpate_turno(cliente_res, client->user_id, atoi(recvBuffer), question);
+                printf("\nSalio\n");
+            }
+
+            for (int i = 0; i < 2; i++) {                
+                strcpy(sendBuffer, get_question_with_answers(client->user_id, cliente_res));
+                send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
+                recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
+                printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
+                register_turno(client->user_id, cliente_res, atoi(recvBuffer));
+                
+            }
+    
             printf("Hello message sent OPT2\n");
             break;
         case 3:	
