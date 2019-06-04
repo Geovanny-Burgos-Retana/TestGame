@@ -68,7 +68,6 @@ void startChat(void* nc){
         
         switch (atoi(recvBuffer)) {
         case 1:
-            printf("\ncase 1\n");
             strcpy(sendBuffer, get_users_no_start_game(client->user_id));
             send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
             recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
@@ -81,40 +80,36 @@ void startChat(void* nc){
                 recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
                 printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
                 register_turno(client->user_id, id_client, atoi(recvBuffer));
-                
             }
-                        
-            printf("\nHello message sent OPT1\n");
             break;
         case 2:
             strcpy(sendBuffer, get_pending_games(client->user_id));
             send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
             recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
-            printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
+            printf("\nCliente con el que va a jugar el proximo turno %d\n", atoi(recvBuffer));
 
             int cliente_res = atoi(recvBuffer);
 
             for (int i = 0; i < 2; i++) {
-                printf("\nEntro\n");
+                printf("\nEntro adivinar\n");
                 int question = pending_question(cliente_res, client->user_id);            
                 strcpy(sendBuffer, get_question_with_answers2(question));
                 send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
                 recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
                 printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
                 udpate_turno(cliente_res, client->user_id, atoi(recvBuffer), question);
-                printf("\nSalio\n");
+                printf("\nSalio adivinar\n");
             }
 
-            for (int i = 0; i < 2; i++) {                
+            for (int i = 0; i < 2; i++) {
+                printf("\nEntro preguntar\n");
                 strcpy(sendBuffer, get_question_with_answers(client->user_id, cliente_res));
                 send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
                 recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
-                printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
+                printf("\nRespuesta del cliente %s\n", recvBuffer);
                 register_turno(client->user_id, cliente_res, atoi(recvBuffer));
-                
+                printf("\nSalio preguntar\n");   
             }
-    
-            printf("Hello message sent OPT2\n");
             break;
         case 3:	
             printf("=> Client desconnected..\n");
@@ -124,7 +119,7 @@ void startChat(void* nc){
             break;
         }
 
-        
+        send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
         //Clean buffers
         memset(recvBuffer, 0, sizeof(recvBuffer));
         memset(sendBuffer, 0, sizeof(sendBuffer));

@@ -131,7 +131,7 @@ int start(){
     send(clientSocket, username, USERNAME_LEN, 0);
     
     while(1) {
-        cout << "\n---- MENU ----\n1.Comenzar juego\n2.Juegos pendientes\n3.Salir\nIngrese opcion: "; cin >> option;        
+        cout << "\n---- MENU ----\n1.Comenzar juego\n2.Juegos pendientes\n3.Matchs\n4.Salir\nIngrese opcion: "; cin >> option;        
         stringstream strs;strs << option;string message = strs.str();        
         strcpy(recvBuffer, message.c_str());
         send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );        
@@ -176,11 +176,16 @@ int start(){
 
             break;
         case 3:
+            
+            break;   
+        case 4:
             exit(1);
             break;        
         default:
             break;
         }
+
+        recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
 
         memset(recvBuffer, 0, sizeof(recvBuffer));
     }

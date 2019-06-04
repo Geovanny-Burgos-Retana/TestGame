@@ -86,7 +86,6 @@ char* get_question_with_answers(int id_user1, int id_user2) { //user1 responde u
     if((row = mysql_fetch_row(res)) != NULL) {
         strcat(buffer, row[1]);  strcat(buffer, "\n");
         question = atoi(row[0]);
-        printf("\nQuestion: %s\n", buffer);
     }
     mysql_close(conn);
     conectionDB();
@@ -101,9 +100,8 @@ char* get_question_with_answers(int id_user1, int id_user2) { //user1 responde u
 
     res = mysql_use_result(conn);
     while((row = mysql_fetch_row(res)) != NULL) {
-        strcat(buffer, row[0]); strcat(buffer, ". "); strcat(buffer, row[1]);  strcat(buffer, "\n");
+        strcat(buffer, row[1]);  strcat(buffer, "\n");
     }
-    printf("\nBuffer: %s\n", buffer);
     mysql_close(conn);
     return buffer;
 }
@@ -185,7 +183,6 @@ char* get_question_with_answers2(int id_pregunta) {
     if((row = mysql_fetch_row(res)) != NULL) {
         strcat(buffer, row[1]);  strcat(buffer, "\n");
         question = atoi(row[0]);
-        printf("\nQuestion: %s\n", buffer);
     }
     mysql_close(conn);
     conectionDB();
@@ -200,9 +197,8 @@ char* get_question_with_answers2(int id_pregunta) {
 
     res = mysql_use_result(conn);
     while((row = mysql_fetch_row(res)) != NULL) {
-        strcat(buffer, row[0]); strcat(buffer, ". "); strcat(buffer, row[1]);  strcat(buffer, "\n");
+        strcat(buffer, row[1]);  strcat(buffer, "\n");
     }
-    printf("\nBuffer: %s\n", buffer);
     mysql_close(conn);
     return buffer;
 }
