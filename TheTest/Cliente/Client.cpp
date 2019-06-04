@@ -25,6 +25,7 @@ using namespace std;
 // Globals
 int clientSocket;
 char username[USERNAME_LEN];
+char recvBuffer[MSG_LEN];
 
 void validInput(){
     printf("Ingrese su nombre: ");
@@ -103,9 +104,9 @@ int start(){
     int clientAddrLen = sizeof(clientInfo);
 
     memset(&serverInfo, 0, serverAddrLen);
-    memset(&clientInfo, 0, clientAddrLen);
+    memset(&clientInfo, 0, clientAddrLen);    
 
-    serverInfo.sin_addr.s_addr = inet_addr("192.168.100.12"); //TODO cambiar esto por el del .config
+    serverInfo.sin_addr.s_addr = inet_addr("192.168.100.13"); //TODO cambiar esto por el del .config
     serverInfo.sin_port = htons(9001);
     serverInfo.sin_family = AF_INET;
 
@@ -123,8 +124,7 @@ int start(){
     }
 
     printf("\n=> Sockect client connected to server\n");
-
-    char recvBuffer[MSG_LEN];
+    
     int option;
 
     //Send username to server
@@ -134,11 +134,21 @@ int start(){
         cout << "\n---- MENU ----\n1.Comenzar juego\n2.Juegos pendientes\n3.Salir\nIngrese opcion: "; cin >> option;        
         stringstream strs;strs << option;string message = strs.str();        
         strcpy(recvBuffer, message.c_str()); 
-        send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
-        printf("Hello message sent %d\n", option);
+        send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );        
         switch (option) {
         case 1:
-            start_game(); 
+            recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
+            printf("%s\nIngrese id de jugador:", recvBuffer);
+            scanf("%s", recvBuffer);
+            send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
+
+            for (int i = 0; i < 2; i++) {
+                recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
+                printf("%s\nIngrese su respuesta:", recvBuffer);
+                scanf("%s", recvBuffer);
+                send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
+            }            
+            
             break;
         case 2:
             pending_game();
@@ -168,6 +178,10 @@ int start(){
 }
 
 void start_game(){
+    recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
+    printf("%s\nIngrese id de jugador:", recvBuffer);
+    scanf("%s", recvBuffer);
+    send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
 
 }
 
