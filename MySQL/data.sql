@@ -25,30 +25,3 @@ INSERT INTO respuesta(id_respuesta, enunciado, id_pregunta) VALUES (null, "tica"
 INSERT INTO respuesta(id_respuesta, enunciado, id_pregunta) VALUES (null, "natacion", 3);
 INSERT INTO respuesta(id_respuesta, enunciado, id_pregunta) VALUES (null, "atletismo", 3);
 INSERT INTO respuesta(id_respuesta, enunciado, id_pregunta) VALUES (null, "futbol", 3);
-
-
-/*Turno Maria contesta juega con carlos*/
-INSERT INTO turno(
-	id_turno,
-    id_pregunta,
-    id_cliente_respuesta,
-    id_cliente_adivina,
-    id_respuesta_cliente,
-    id_respuesta_cliente_adivina,
-    ready
-    ) VALUES (null, 1, 1, 2, 3, null, 0);
-    
-/*Turno carlos adivina a maria*/
-INSERT INTO turno(
-	id_turno,
-    id_pregunta,
-    id_cliente_respuesta,
-    id_cliente_adivina,
-    id_respuesta_cliente,
-    id_respuesta_cliente_adivina,
-    ready
-    ) VALUES (null, 1, 1, 2, 3, 2, 0);
-    
-
-
-DROP table turno;

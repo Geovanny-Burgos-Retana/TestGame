@@ -1,8 +1,6 @@
 USE test_game_so;
 
-
 /*Juegos pendientes*/
-
 DELIMITER $$
 CREATE PROCEDURE SELECT_JUEGOS_PENDIENTES (
 	IN p_cliente INT
@@ -12,7 +10,6 @@ BEGIN
     FROM turno
     WHERE id_cliente_respuesta = p_cliente;
 END$$
-
 
 /*Puntaje*/
 DELIMITER $$
@@ -42,4 +39,24 @@ BEGIN
         INSERT INTO cliente VALUES (DEFAULT , p_nombre);
         select id_cliente from cliente WHERE nombre = p_nombre;
 	END IF;
+END$$
+
+DELIMITER $$
+CREATE PROCEDURE insert_game (
+   IN p_id1 INT,
+   IN p_id2 INT
+)
+BEGIN
+   INSERT INTO game(id_game, id_cliente1, id_cliente2) VALUES (null, p_id1, p_id2);
+   INSERT INTO game(id_game, id_cliente1, id_cliente2) VALUES (null, p_id2, p_id1);
+END$$
+
+DELIMITER $$
+CREATE PROCEDURE get_users_start_game (
+   IN p_id1 INT
+)
+BEGIN
+   SELECT id_cliente, nombre FROM cliente AS c
+   LEFT JOIN game AS g ON g.id_cliente1 = c.id_cliente
+   WHERE g.id_cliente1 IS NULL AND id_cliente != p_id1;
 END$$

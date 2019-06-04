@@ -19,7 +19,6 @@ CREATE TABLE respuesta  (
     foreign key (id_pregunta) REFERENCES pregunta(id_pregunta)
 );
 
-
 CREATE TABLE turno  (
 	id_turno INT not null auto_increment PRIMARY KEY,
     id_pregunta INT,
@@ -34,4 +33,12 @@ CREATE TABLE turno  (
     foreign key (id_cliente_adivina) REFERENCES cliente(id_cliente),
     foreign key (id_respuesta_cliente) REFERENCES respuesta(id_respuesta),
     foreign key (id_respuesta_cliente_adivina) REFERENCES respuesta(id_respuesta)
+);
+
+CREATE TABLE game (
+   id_game INT not null auto_increment PRIMARY KEY,
+   id_cliente1 INT,
+   id_cliente2 INT,
+   foreign key (id_cliente1) REFERENCES cliente(id_cliente),
+   foreign key (id_cliente2) REFERENCES cliente(id_cliente)
 );
