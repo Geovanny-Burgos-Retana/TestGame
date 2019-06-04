@@ -1,5 +1,9 @@
 #include "Server.h"
 
+char recvBuffer[MSG_LEN];
+char sendBuffer[MSG_LEN];
+
+
 void initServer(){
     int optSock = 1;
         
@@ -45,8 +49,7 @@ void initServer(){
 void startChat(void* nc){
     char *hello = "Hello from server"; 
 
-    char recvBuffer[MSG_LEN];
-    char sendBuffer[MSG_LEN];
+    
     int quit = 0;
     ClientNode* client = (ClientNode*)nc;
 
@@ -61,13 +64,27 @@ void startChat(void* nc){
             printf("Desconectando al cliente: %s\n\n", client->username);
             break;
         }
+        printf("\n%s\n", recvBuffer);
         
         switch (atoi(recvBuffer)) {
         case 1:
-            get_users_no_start_game(client->user_id);
-            hello = "Hello message sented form server";
-            send(client->sockID , hello , strlen(hello) , 0 ); 
-            printf("Hello message sent OPT1\n");					
+            printf("\ncase 1\n");
+            strcpy(sendBuffer, get_users_no_start_game(client->user_id));
+            send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
+            recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
+            int id_client = atoi(recvBuffer);
+            printf("\nID C1: %d ID C2: %d\n", client->user_id, id_client);
+            
+            for (int i = 0; i < 2; i++) {
+                strcpy(sendBuffer, get_question_with_answers(client->user_id, id_client));
+                send(client->sockID , sendBuffer , strlen(sendBuffer) , 0);
+                recv(client->sockID , recvBuffer , strlen(recvBuffer) , 0);
+                printf("\nRespuesta del cliente %d\n", atoi(recvBuffer));
+                register_turno(client->user_id, id_client, atoi(recvBuffer));
+            }
+            
+            
+            printf("\nHello message sent OPT1\n");
             break;
         case 2:
             hello = "Hello message sented form server";
@@ -126,4 +143,9 @@ int registerUsername(char* sendBuffer, ClientNode* client){
 
 void sendMessageToUser(char recvBuffer[], char sendBuffer[], ClientNode* client){
 
+}
+
+
+void start_game(ClientNode* client){
+    
 }

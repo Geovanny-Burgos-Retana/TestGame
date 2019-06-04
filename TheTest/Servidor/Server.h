@@ -11,7 +11,7 @@
 #include <netdb.h>
 #include "Connections.h"
 #include "Database.h"
-#define MSG_LEN 256
+#define MSG_LEN 1024
 
 //Variables
 int serverSocket;
