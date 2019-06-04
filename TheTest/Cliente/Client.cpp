@@ -106,7 +106,7 @@ int start(){
     memset(&serverInfo, 0, serverAddrLen);
     memset(&clientInfo, 0, clientAddrLen);    
 
-    serverInfo.sin_addr.s_addr = inet_addr("192.168.100.13"); //TODO cambiar esto por el del .config
+    serverInfo.sin_addr.s_addr = inet_addr("172.19.53.31"); //TODO cambiar esto por el del .config
     serverInfo.sin_port = htons(9001);
     serverInfo.sin_family = AF_INET;
 
@@ -133,7 +133,7 @@ int start(){
     while(1) {
         cout << "\n---- MENU ----\n1.Comenzar juego\n2.Juegos pendientes\n3.Salir\nIngrese opcion: "; cin >> option;        
         stringstream strs;strs << option;string message = strs.str();        
-        strcpy(recvBuffer, message.c_str()); 
+        strcpy(recvBuffer, message.c_str());
         send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );        
         switch (option) {
         case 1:
@@ -151,7 +151,29 @@ int start(){
             
             break;
         case 2:
-            pending_game();
+            recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
+            printf("%s\nIngrese id cliente:", recvBuffer);
+            scanf("%s", recvBuffer);
+            send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
+
+            for (int i = 0; i < 2; i++) {
+                printf("\nEntro\n");
+                recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
+                printf("%s\nAdivina la respuesta:", recvBuffer);
+                scanf("%s", recvBuffer);
+                printf("\n------Mi adivinanza es: %s\n",recvBuffer);
+                send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
+                printf("\nSalio\n");
+            }                  
+
+            for (int i = 0; i < 2; i++) {
+                recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
+                printf("%s\nIngrese su respuesta:", recvBuffer);
+                scanf("%s", recvBuffer);
+                printf("\n------Mi respuesta es: %s\n",recvBuffer);
+                send(clientSocket, recvBuffer, strlen(recvBuffer), 0 );
+            }                  
+
             break;
         case 3:
             exit(1);
@@ -159,6 +181,8 @@ int start(){
         default:
             break;
         }
+
+        memset(recvBuffer, 0, sizeof(recvBuffer));
     }
 
 

@@ -19,5 +19,9 @@ int get_idUser(char*);
 char* get_users_no_start_game(int);
 char* get_question_with_answers(int, int);
 void register_turno(int, int, int);
+char* get_pending_games(int);
+int pending_question(int , int );
+char* get_question_with_answers2(int);
+void udpate_turno(int , int , int , int );
 
 #endif // DATABASE_H_INCLUDED
