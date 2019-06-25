@@ -1,8 +1,0 @@
-#ifndef CONSTANTS_H_INCLUDED
-#define CONSTANTS_H_INCLUDED
-
-#define MSG_LEN 256
-#define USERNAME_LEN 32
-#define IP_LEN 16
-
-#endif // CONSTANTS_H_INCLUDED
